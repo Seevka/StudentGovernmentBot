@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentGovernmentCourseWork", "StudentGovernmentCourseWork.csproj", "{18A1F98B-CF21-4FB1-9656-975BC3580B94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", "{B11F1757-4F67-4D13-811B-88F2AEA4EF5A}"
+	ProjectSection(SolutionItems) = preProject
+		launchSettings.json = launchSettings.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectFiles", "ProjectFiles", "{B551D402-DD94-4656-97FD-E16C3BA19360}"
+	ProjectSection(SolutionItems) = preProject
+		Constants.cs = Constants.cs
+		Controllers.cs = Controllers.cs
+		HelperClasses.cs = HelperClasses.cs
+		UpdateInfo.cs = UpdateInfo.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18A1F98B-CF21-4FB1-9656-975BC3580B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18A1F98B-CF21-4FB1-9656-975BC3580B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18A1F98B-CF21-4FB1-9656-975BC3580B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18A1F98B-CF21-4FB1-9656-975BC3580B94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {934F99DD-7BAA-4A30-9FE9-5097E6222AF5}
+	EndGlobalSection
+EndGlobal
