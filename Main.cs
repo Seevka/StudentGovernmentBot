@@ -30,13 +30,15 @@ namespace StudentGovernment
 
         public override async Task OnPrivateChat(Chat chat, User user, UpdateInfo update)
         {
+            if (update.UpdateKind != UpdateKind.NewMessage || update.MsgCategory != MsgCategory.Text)
+                return;
             if (update.Message.Text == "/start")
             {
 
                 await StartFunction(chat);
                 return;
             }
-            else if (update.Message.Text == cultArt.Name || update.Message.Text == "/ami")
+            else if (update.Message.Text == ami.Name || update.Message.Text == "/ami")
             {
                 await CallKeyboard(chat, "Лови усю інформацію, яку я маю для факультету прикладної математики та інформатики 😉\r\nНе знайшов свого або все ще залишилися питання? Не соромся написати мені його, а я його передам кому потрібно 🙌", ami.ReplyKeyboardMarkup);
                 connection.Open();
@@ -65,7 +67,7 @@ namespace StudentGovernment
             else if (ami.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
             {
                 await Telegram.SendTextMessageAsync(chat, ami.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value);
-                if (update.Message.Text == "Задати питання адміністратру ФПМІ")
+                if (update.Message.Text == "Задати питання адміністратору ФПМІ")
                 {
                     var userQuestion = await NewTextMessage(update);
                     connection.Open();
@@ -82,7 +84,7 @@ namespace StudentGovernment
             else if (cultArt.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
             {
                 await Telegram.SendTextMessageAsync(chat, cultArt.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value);
-                if (update.Message.Text == "Зaдати питання адміністратуру ФКІМ")
+                if (update.Message.Text == "Зaдати питання адміністратору ФКІМ")
                 {
                     var userQuestion = await NewTextMessage(update);
                     connection.Open();
