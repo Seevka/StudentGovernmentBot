@@ -5,16 +5,15 @@ using System.Data.SqlClient;
 using System.Diagnostics.Metrics;
 using Microsoft.VisualBasic;
 using Telegram.Bot.Types.Enums;
+using Google.Protobuf.WellKnownTypes;
 
 namespace StudentGovernment
 {
     public class StudentGovernmentBot : StudentGovernment
     {
-        public bool _ifUserExist = false;
-        public int whatFaculty = 0;
-        AMI ami = new AMI();
-        CultArt cultArt = new CultArt();
-        static SqlConnection connection = new SqlConnection(@"Data Source=DESKTOP-LIT9J9L\MYDB;Initial Catalog=StudentGovernment;Integrated Security=True");
+        Bachelor bachelor = new Bachelor();
+        Master master = new Master();
+        Faculties faculties = new Faculties();
         static void Main(string[] args)
         {
             var bot = new StudentGovernmentBot(args[0]);
@@ -25,8 +24,20 @@ namespace StudentGovernment
 
         public async Task StartFunction(Chat chat)
         {
-            await CallKeyboard(chat, "👋Привіт! Цей бот створений, щоб відповісти на всі питання, які тебе цікавлять, але перед цим обери свій факультет 😍", ami.Faculties);
+            await CallKeyboard(chat, "👋 Привіт, майбутнім студентам Франкового Університету!  \r\n \r\nМене звати @LNU_abit та я тут, щоб допомогти тобі розібратись з усіма проблемами, які виникатимуть під час вступної кампанії😉 \r\n \r\nЯкщо хочеш щось дізнатися - натискай клавішу з відповідним запитанням або переходь в чат, де мої колеги тобі допоможуть❤️‍🔥" +
+                " \r\n \r\nДо зустрічі у #вже_зовсім_скоро_рідних_стінах !\U0001f929", startKeyboard);
         }
+
+        ReplyKeyboardMarkup startKeyboard = new(new[]
+{
+                new KeyboardButton[] { "Контакти Приймальної комісії📲", "Студентські ради у соціальних мережах💻"},
+                new KeyboardButton[] { "Дні відкритих дверей⏰", "Консультаційний центр для вступників та Приймальні комісії факультетів👥"},
+                new KeyboardButton[] { "Вступ до бакалаврату", "Вступ до магістратури" },
+                new KeyboardButton[] { "🤔Виникло питання або проблема?"},
+})
+        {
+            ResizeKeyboard = true
+        };
 
         public override async Task OnPrivateChat(Chat chat, User user, UpdateInfo update)
         {
@@ -34,224 +45,83 @@ namespace StudentGovernment
                 return;
             if (update.Message.Text == "/start")
             {
-
                 await StartFunction(chat);
                 return;
             }
-            else if (update.Message.Text == ami.Name || update.Message.Text == "/ami")
+            else if (update.Message.Text == bachelor.Name || update.Message.Text == "/bachelor")
             {
-                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для факультету прикладної математики та інформатики 😉\r\nНе знайшов свого або все ще залишилися питання? Не соромся написати мені його, а я його передам кому потрібно 🙌", ami.ReplyKeyboardMarkup);
-                connection.Open();
-                using (SqlCommand checkCommand = new SqlCommand($"SELECT COUNT(*) FROM STUDENT_GOVERNMENT WHERE ChatID = {chat.Id}", connection))
-                {
-                    int existingCount = (int)checkCommand.ExecuteScalar();
+                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для тебе 😉", bachelor.ReplyKeyboardMarkup);
 
-                    if (existingCount == 0)
-                    {
-                        using (SqlCommand command = new SqlCommand($"INSERT INTO STUDENT_GOVERNMENT (ChatID,Faculty, UserName  ) VALUES ({chat.Id}, 1, '@{user.Username}')", connection))
-                        {
-                            await command.ExecuteNonQueryAsync();
-                        }
-                    }
-                    else
-                    {
-                        using (SqlCommand command = new SqlCommand($"UPDATE STUDENT_GOVERNMENT SET Faculty = 1 WHERE ChatID = ({chat.Id})", connection))
-                        {
-                            await command.ExecuteNonQueryAsync();
-                        }
-                    }
-                }
-                connection.Close();
                 return;
             }
-            else if (ami.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
+            else if (update.Message.Text == "Контакти Приймальної комісії📲" || update.Message.Text == "/contacts")
             {
-                await Telegram.SendTextMessageAsync(chat, ami.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value);
-                if (update.Message.Text == "Задати питання адміністратору ФПМІ")
-                {
-                    var userQuestion = await NewTextMessage(update);
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand($"INSERT INTO STUDENT_QUESTIONS (Faculty ,UserName, Question, IsAnswered, ChatID  ) VALUES (1, '@{user.Username}', '{userQuestion}',0,'{chat.Id}')", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    connection.Close();
-                    await Telegram.SendTextMessageAsync(chat, "Твоє питання надіслано, очікуй відповіді ‍💻");
-                    return;
-                }
+                await Telegram.SendTextMessageAsync(chat, "Адреса: вул. Січових Cтрільців, 14, \r\nм. Львів, 79000 \r\n" +
+                    "каб. 112, 113 \r\n📞 тел. (032) 239-45-70, 255-39-65, 239-43-30, 239-48-70 \r\nмоб. тел." +
+                    " (096) 600-77-31 \r\n📩e-mail: pkunivlv@lnu.edu.ua \r\n \r\nСторінки для вступників у соціальних мережах:" +
+                    " \r\n\r\nІнстаграм: https://instagram.com/lnuvstup?igshid=MzRlODBiNWFlZA== \r\n \r\nТелеграм-канал:" +
+                    " https://t.me/entrantlnu\r\n\r\nСайт Вступної кампанії: https://admission.lnu.edu.ua/\r\n\r\n📆 " +
+                    "Розклад роботи Приймальної комісії:  \r\nпонеділок – п’ятниця з 9:00 до 18:00; \r\nобідня перерва – 13:00-14:00;" +
+                    " \r\nсубота та неділя – вихідні дні.", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
                 return;
             }
-            else if (cultArt.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
+            else if (update.Message.Text == "Дні відкритих дверей⏰" || update.Message.Text == "/opendays")
             {
-                await Telegram.SendTextMessageAsync(chat, cultArt.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value);
-                if (update.Message.Text == "Зaдати питання адміністратору ФКІМ")
-                {
-                    var userQuestion = await NewTextMessage(update);
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand($"INSERT INTO STUDENT_QUESTIONS (Faculty ,UserName, Question, IsAnswered, ChatID  ) VALUES (2, '@{user.Username}', '{userQuestion}',0,'{chat.Id}')", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    connection.Close();
-                    await Telegram.SendTextMessageAsync(chat, "Твоє питання надіслано, очікуй відповіді ‍🎨");
-                    return;
-                }
+                await Telegram.SendTextMessageAsync(chat, "Актуальна інформація щодо розкладу та анонсів Днів відкритих дверей у Львівському національному університету імені Івана Франка розміщується на сторінках для вступників у соціальних мережах: Інстаграм та Телеграм📲\r\n\r\n📎 https://instagram.com/lnuvstup?igshid=MzRlODBiNWFlZA==\r\n\r\n📎 https://t.me/entrantlnu", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
                 return;
             }
-            else if (update.Message.Text == cultArt.Name || update.Message.Text == "/cultart")
+            else if (update.Message.Text == "Консультаційний центр для вступників та Приймальні комісії факультетів👥" || update.Message.Text == "/consult")
             {
-                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для факультету культури та мистецтв 😉\r\nНе знайшов свого або все ще залишилися питання? Не соромся написати мені його, а я його передам кому потрібно 🙌", cultArt.ReplyKeyboardMarkup);
-                connection.Open();
-                using (SqlCommand checkCommand = new SqlCommand($"SELECT COUNT(*) FROM STUDENT_GOVERNMENT WHERE ChatID = {chat.Id}", connection))
-                {
-                    int existingCount = (int)checkCommand.ExecuteScalar();
+                await Telegram.SendTextMessageAsync(chat, "", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
+                return;
+            }
+            else if (update.Message.Text == "🤔Виникло питання або проблема?" || update.Message.Text == "/questions")
+            {
+                await Telegram.SendTextMessageAsync(chat, "Якщо ж тут немає відповіді на твоє запитання, переходь в чат-бесіду каналу, за посиланням, де мої колеги тобі допоможуть❤️‍🔥\r\n\r\n📎https://t.me/entrantlnu", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
+                return;
+            }
+            else if (update.Message.Text == bachelor.Name || update.Message.Text == "/bachelor")
+            {
+                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для тебе 😉", bachelor.ReplyKeyboardMarkup);
 
-                    if (existingCount == 0)
-                    {
-                        using (SqlCommand command = new SqlCommand($"INSERT INTO STUDENT_GOVERNMENT (ChatID,Faculty, UserName  ) VALUES ({chat.Id}, 2, '@{user.Username}')", connection))
-                        {
-                            await command.ExecuteNonQueryAsync();
-                        }
-                    }
-                    else
-                    {
-                        using (SqlCommand command = new SqlCommand($"UPDATE STUDENT_GOVERNMENT SET Faculty = 2 WHERE ChatID = ({chat.Id})", connection))
-                        {
-                            await command.ExecuteNonQueryAsync();
-                        }
-                    }
-                }
-                connection.Close();
                 return;
             }
-            else if (update.Message.Text == "/restart")
+            else if (bachelor.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
             {
-                await StartFunction(chat);
+                await Telegram.SendTextMessageAsync(chat, bachelor.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value, disableWebPagePreview: true);
                 return;
             }
-            else if (update.Message.Text == "Адміністрування" || update.Message.Text == "/admin")
+            else if (master.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
             {
-                if (chat.Id.ToString() != ami.Admin.ToString())
-                {
-                    await Telegram.SendTextMessageAsync(chat, "На жаль, ви не маєте доступу до цієї функції, але якщо бажаєте вступити в команду - пишіть в Telegram @Seevkaa");
-                }
-                else
-                {
-                    await CallKeyboard(chat, "Ось команди для адміністрування", ami.AdminKeyboard);
-
-                }
-                return;
-
-            }
-            else if (update.Message.Text == "Побачити усі питання" && chat.Id.ToString() == ami.Admin.ToString())
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT * FROM STUDENT_QUESTIONS", connection);
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    await Telegram.SendTextMessageAsync(chat.Id, $"Question ID :{reader.GetValue(0)}" +
-                        $"\r\nUserName: {reader.GetValue(2)}\r\nQuestion:" +
-                        $" {reader.GetValue(3)}\r\nIsAnswered:" +
-                        $" {reader.GetValue(4)}");
-                }
-                connection.Close();
-                return;
-
-            }
-            else if (update.Message.Text == "Побачити лише питання, на які було надано відповідь" && chat.Id.ToString() == ami.Admin.ToString())
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT * FROM STUDENT_QUESTIONS WHERE IsAnswered = 1", connection);
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    await Telegram.SendTextMessageAsync(chat.Id, $"Question ID :{reader.GetValue(0)}" +
-                        $"\r\nUserName: @{reader.GetValue(2)}\r\nQuestion:" +
-                        $" {reader.GetValue(3)}\r\n");
-                }
-                connection.Close();
+                await Telegram.SendTextMessageAsync(chat, master.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value, disableWebPagePreview: true);
                 return;
             }
-            else if (update.Message.Text == "Побачити лише питання, на які не було надано відповідь" && chat.Id.ToString() == ami.Admin.ToString())
+            else if (update.Message.Text == master.Name || update.Message.Text == "/master")
             {
-                {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT * FROM STUDENT_QUESTIONS WHERE IsAnswered = 0", connection);
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        await Telegram.SendTextMessageAsync(chat.Id, $"Question ID :{reader.GetValue(0)}" +
-                            $"\r\nUserName: @{reader.GetValue(2)}\r\nQuestion:" +
-                            $" {reader.GetValue(3)}\r\n");
-                    }
-                    connection.Close();
-                    return;
-                }
-            }
-            else if (update.Message.Text == "Побачити питання студентів ФПМІ" && chat.Id.ToString() == ami.Admin.ToString())
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT * FROM STUDENT_QUESTIONS WHERE Faculty = 1", connection);
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    await Telegram.SendTextMessageAsync(chat.Id, $"Question ID :{reader.GetValue(0)}" +
-                        $"\r\nUserName: @{reader.GetValue(2)}\r\nQuestion:" +
-                        $" {reader.GetValue(3)}\r\n");
-                }
-                connection.Close();
+                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для тебе 😉", master.ReplyKeyboardMarkup);
                 return;
             }
-            else if (update.Message.Text == "Побачити питання студентів ФКІМ" && chat.Id.ToString() == ami.Admin.ToString())
+            else if (faculties.QuestionAnswer.Any(response => response.Key.Contains(update.Message.Text)))
             {
-                {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT * FROM STUDENT_QUESTIONS WHERE Faculty = 2", connection);
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        await Telegram.SendTextMessageAsync(chat.Id, $"Question ID :{reader.GetValue(0)}" +
-                            $"\r\nUserName: @{reader.GetValue(2)}\r\nQuestion:" +
-                            $" {reader.GetValue(3)}\r\n");
-                    }
-                    connection.Close();
-                    return;
-                }
-            }
-            else if (update.Message.Text == "Відповісти на питання" && chat.Id.ToString() == ami.Admin.ToString())
-            {
-                connection.Open();
-                await Telegram.SendTextMessageAsync(chat, "Please enter question ID");
-                var questionID = await NewTextMessage(update);
-                using (SqlCommand command = new SqlCommand($"UPDATE STUDENT_QUESTIONS" +
-                        $" SET IsAnswered = 1" +
-                        $" WHERE QuestionID = {questionID}", connection))
-                    await command.ExecuteNonQueryAsync();
-                connection.Close();
-                await Telegram.SendTextMessageAsync(chat, "Updated");
+                await Telegram.SendTextMessageAsync(chat, faculties.QuestionAnswer.FirstOrDefault(answer => answer.Key == update.Message.Text).Value, disableWebPagePreview: true, parseMode: ParseMode.Markdown);
                 return;
             }
-            else if (update.Message.Text == "Отримати айді користувача" && chat.Id.ToString() == ami.Admin.ToString())
+            else if (update.Message.Text == faculties.Name || update.Message.Text == "/faculties")
             {
-                var _username = "";
-                await Telegram.SendTextMessageAsync(chat, "Введіть Username користувача (через @)");
-                var username = await NewTextMessage(update);
-                connection.Open();
-                using (SqlCommand command = new SqlCommand($"SELECT ChatID FROM STUDENT_GOVERNMENT WHERE UserName = '{username}'", connection))
-                {
-                    _username = command.ExecuteScalar().ToString();
-                }
-                connection.Close();
-                await Telegram.SendTextMessageAsync(chat, $"Користувач із {username} має ось такий айді: {_username}");
-
+                await CallKeyboard(chat, "Лови усю інформацію, яку я маю для тебе 😉", faculties.ReplyKeyboardMarkup);
+                return;
+            }
+            else if (update.Message.Text == "/restart" || update.Message.Text == "Вернутися на початок")
+            {
+                await CallKeyboard(chat, "👣👣👣", startKeyboard);
                 return;
             }
             else
             {
-                await Telegram.SendTextMessageAsync(chat, "Ти написав щось не те, спробуй ще раз");
+                await CallKeyboard(chat, "Ти написав щось не те, спробуй ще раз", startKeyboard);
                 return;
             }
+
         }
     }
 }
