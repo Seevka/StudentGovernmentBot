@@ -72,7 +72,7 @@ namespace StudentGovernment
             }
             else if (update.Message.Text == "Консультаційний центр для вступників та Приймальні комісії факультетів👥" || update.Message.Text == "/consult")
             {
-                await Telegram.SendTextMessageAsync(chat, "", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
+                await Telegram.SendTextMessageAsync(chat, "Консультаційний центр для вступників працює у будні дні з 10:00 до 17:00 год. у 116 авдиторії Головного корпусу Університету ( вул. Університетська,1).", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
                 return;
             }
             else if (update.Message.Text == "🤔Виникло питання або проблема?" || update.Message.Text == "/questions")
@@ -113,7 +113,7 @@ namespace StudentGovernment
             }
             else if (update.Message.Text == "/restart" || update.Message.Text == "Вернутися на початок")
             {
-                await CallKeyboard(chat, "👣👣👣", startKeyboard);
+                await CallKeyboard(chat, "👩‍🎓🧑‍🎓", startKeyboard);
                 return;
             }
             else
