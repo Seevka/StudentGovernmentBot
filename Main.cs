@@ -59,8 +59,8 @@ namespace StudentGovernment
                 await Telegram.SendTextMessageAsync(chat, "Адреса: вул. Січових Cтрільців, 14, \r\nм. Львів, 79000 \r\n" +
                     "каб. 112, 113 \r\n📞 тел. (032) 239-45-70, 255-39-65, 239-43-30, 239-48-70 \r\nмоб. тел." +
                     " (096) 600-77-31 \r\n📩e-mail: pkunivlv@lnu.edu.ua \r\n \r\nСторінки для вступників у соціальних мережах:" +
-                    " \r\n\r\nІнстаграм: https://instagram.com/lnuvstup?igshid=MzRlODBiNWFlZA== \r\n \r\nТелеграм-канал:" +
-                    " https://t.me/entrantlnu\r\n\r\nСайт Вступної кампанії: https://admission.lnu.edu.ua/\r\n\r\n📆 " +
+                    " \r\n\r\n[Інстаграм](https://instagram.com/lnuvstup?igshid=MzRlODBiNWFlZA==) \r\n \r\n[Телеграм-канал]" +
+                    "(https://t.me/entrantlnu)\r\n\r\n[Сайт Вступної кампанії](https://admission.lnu.edu.ua/)\r\n\r\n📆 " +
                     "Розклад роботи Приймальної комісії:  \r\nпонеділок – п’ятниця з 9:00 до 18:00; \r\nобідня перерва – 13:00-14:00;" +
                     " \r\nсубота та неділя – вихідні дні.", disableWebPagePreview: true, parseMode: ParseMode.Markdown);
                 return;
