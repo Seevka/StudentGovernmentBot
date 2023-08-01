@@ -39,12 +39,21 @@ namespace StudentGovernment
             Console.WriteLine("Press Escape to stop the bot");
             while (true)
             {
-                var updates = await Telegram.GetUpdatesAsync(_lastUpdateId + 1, timeout: 2);
-                foreach (var update in updates)
-                    HandleUpdate(update);
-                if (Console.KeyAvailable)
-                    if (Console.ReadKey().Key == ConsoleKey.Escape)
-                        break;
+                try
+                {
+                    var updates = await Telegram.GetUpdatesAsync(_lastUpdateId + 1, timeout: 5);
+                    foreach (var update in updates)
+                        HandleUpdate(update);
+                    if (Console.KeyAvailable)
+                        if (Console.ReadKey().Key == ConsoleKey.Escape)
+                            break;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(DateTime.Now);
+                    Thread.Sleep(5000);
+                }
             }
             _cancel.Cancel();
         }
